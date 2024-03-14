@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Microservice</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      h1 {
+        color: #333;
+      }
+      .status-info {
+        font-size: 18px;
+        margin-top: 20px;
+      }
+      .status-info p {
+        margin-bottom: 10px;
+      }
+      .status {
+        font-size: 24px;
+        display: inline-block;
+        padding: 8px 20px;
+        border-radius: 20px;
+      }
+      .status-aman {
+        background-color: #28a745; /* Hijau */
+        color: #fff;
+      }
+      .status-siaga {
+        background-color: #ffc107; /* Kuning */
+        color: #333;
+      }
+      .status-bahaya {
+        background-color: #dc3545; /* Merah */
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Microservice</h1>
+      <div class="status-info">
+        <div class="status" id="status">Loading...</div>
+        <div id="status-data"></div>
+      </div>
+    </div>
+
+    <script>
+      function getStatus() {
+        fetch("/status")
+          .then((response) => response.json())
+          .then((data) => {
+            const statusElement = document.getElementById("status");
+            const statusDataElement = document.getElementById("status-data");
+
+            statusElement.textContent = "Status: " + data.status;
+            statusElement.className =
+              "status status-" + data.status.toLowerCase(); 
+            statusDataElement.innerHTML =
+              "<p><b>Water:</b> " +
+              data.data.water +
+              " meter</p><p><b>Wind:</b> " +
+              data.data.wind +
+              " meter per second</p>";
+
+            // Memperbarui status setiap 15 detik
+            setTimeout(getStatus, 15000);
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+
+      // Memanggil getStatus saat halaman dimuat
+      document.addEventListener("DOMContentLoaded", getStatus);
+    </script>
+  </body>
+</html>
