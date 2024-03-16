@@ -32,7 +32,13 @@
       .status-info p {
         margin-bottom: 10px;
       }
-      .status {
+      .water-status {
+        font-size: 24px;
+        display: inline-block;
+        padding: 8px 20px;
+        border-radius: 20px;
+      }
+      .wind-status {
         font-size: 24px;
         display: inline-block;
         padding: 8px 20px;
@@ -50,13 +56,19 @@
         background-color: #dc3545; /* Merah */
         color: #fff;
       }
+      @media screen and (max-width: 580px) {
+        .water-status {
+          margin-bottom: 15px;
+        }
+      }
     </style>
   </head>
   <body>
     <div class="container">
-      <h1>Microservice</h1>
+      <h1>Weather Status</h1>
       <div class="status-info">
-        <div class="status" id="status">Loading...</div>
+        <div class="water-status" id="water-status">Loading...</div>
+        <div class="wind-status" id="wind-status">Loading...</div>
         <div id="status-data"></div>
       </div>
     </div>
@@ -66,18 +78,23 @@
         fetch("/status")
           .then((response) => response.json())
           .then((data) => {
-            const statusElement = document.getElementById("status");
+            const waterStatusElement = document.getElementById("water-status");
+            const windStatusElement = document.getElementById("wind-status");
             const statusDataElement = document.getElementById("status-data");
 
-            statusElement.textContent = "Status: " + data.status;
-            statusElement.className =
-              "status status-" + data.status.toLowerCase(); 
+            waterStatusElement.textContent =
+              "Water Status: " + data.waterStatus;
+            windStatusElement.textContent = "Wind Status: " + data.windStatus;
+            waterStatusElement.className =
+              "water-status status-" + data.waterStatus.toLowerCase();
+            windStatusElement.className =
+              "wind-status status-" + data.windStatus.toLowerCase();
             statusDataElement.innerHTML =
               "<p><b>Water:</b> " +
               data.data.water +
-              " meter</p><p><b>Wind:</b> " +
+              " Meter</p><p><b>Wind:</b> " +
               data.data.wind +
-              " meter per second</p>";
+              " Meter Per Second</p>";
 
             // Memperbarui status setiap 15 detik
             setTimeout(getStatus, 15000);

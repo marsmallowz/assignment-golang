@@ -18,8 +18,9 @@ type Status struct {
 }
 
 type StatusResponse struct {
-	Status string `json:"status"`
-	Data   Status `json:"data"`
+	WaterStatus string `json:"waterStatus"`
+	WindStatus  string `json:"windStatus"`
+	Data        Status `json:"data"`
 }
 
 var (
@@ -48,22 +49,39 @@ func getStatusHandler(c *gin.Context) {
 	statusMutex.RLock()
 	defer statusMutex.RUnlock()
 
-	status := getStatus(currentData)
-	response := StatusResponse{
-		Status: status,
-		Data:   currentData,
-	}
+	response := getStatusResponse(currentData)
+
 	c.JSON(http.StatusOK, response)
 }
 
-func getStatus(data Status) string {
-	if data.Water < 5 || data.Wind < 6 {
-		return "Aman"
-	} else if (data.Water >= 5 && data.Water <= 8) || (data.Wind >= 6 && data.Wind <= 15) {
-		return "Siaga"
-	} else {
-		return "Bahaya"
+func getStatusResponse(data Status) StatusResponse {
+	windStatus, waterStatus := getStatus(currentData)
+	response := StatusResponse{
+		WindStatus:  windStatus,
+		WaterStatus: waterStatus,
+		Data:        currentData,
 	}
+	return response
+}
+
+func getStatus(data Status) (windStatus string, waterStatus string) {
+	if data.Water <= 5 {
+		waterStatus = "Aman"
+	} else if data.Water >= 6 && data.Water <= 8 {
+		waterStatus = "Siaga"
+	} else {
+		waterStatus = "Bahaya"
+	}
+
+	if data.Wind <= 6 {
+		windStatus = "Aman"
+	} else if data.Wind >= 7 && data.Wind <= 15 {
+		windStatus = "Siaga"
+	} else {
+		windStatus = "Bahaya"
+	}
+
+	return windStatus, waterStatus
 }
 
 func updateStatus() {
@@ -75,7 +93,8 @@ func updateStatus() {
 		Wind:  rand.Intn(100) + 1,
 	}
 
-	jsonData, err := json.Marshal(currentData)
+	response := getStatusResponse(currentData)
+	jsonData, err := json.Marshal(response)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
