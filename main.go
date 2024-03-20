@@ -65,7 +65,12 @@ func createOrder(c *gin.Context) {
 	if newOrder.OrderedAt.IsZero() {
 		newOrder.OrderedAt = time.Now()
 	}
+	fmt.Println("before newOrder")
+	fmt.Println(newOrder)
 	db.Create(&newOrder)
+	fmt.Println("after newOrder")
+	fmt.Println(newOrder)
+
 	c.JSON(200, newOrder)
 }
 
@@ -90,7 +95,6 @@ func updateOrder(c *gin.Context) {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
-
 	db.Save(&updatedOrder)
 	c.JSON(200, updatedOrder)
 }
