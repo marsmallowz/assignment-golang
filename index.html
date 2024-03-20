@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Microservice</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      h1 {
+        color: #333;
+      }
+      .status-info {
+        font-size: 18px;
+        margin-top: 20px;
+      }
+      .status-info p {
+        margin-bottom: 10px;
+      }
+      .water-status {
+        font-size: 24px;
+        display: inline-block;
+        padding: 8px 20px;
+        border-radius: 20px;
+      }
+      .wind-status {
+        font-size: 24px;
+        display: inline-block;
+        padding: 8px 20px;
+        border-radius: 20px;
+      }
+      .status-aman {
+        background-color: #28a745; /* Hijau */
+        color: #fff;
+      }
+      .status-siaga {
+        background-color: #ffc107; /* Kuning */
+        color: #333;
+      }
+      .status-bahaya {
+        background-color: #dc3545; /* Merah */
+        color: #fff;
+      }
+      @media screen and (max-width: 580px) {
+        .water-status {
+          margin-bottom: 15px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Weather Status</h1>
+      <div class="status-info">
+        <div class="water-status" id="water-status">Loading...</div>
+        <div class="wind-status" id="wind-status">Loading...</div>
+        <div id="status-data"></div>
+      </div>
+    </div>
+
+    <script>
+      function getStatus() {
+        fetch("/status")
+          .then((response) => response.json())
+          .then((data) => {
+            const waterStatusElement = document.getElementById("water-status");
+            const windStatusElement = document.getElementById("wind-status");
+            const statusDataElement = document.getElementById("status-data");
+
+            waterStatusElement.textContent =
+              "Water Status: " + data.waterStatus;
+            windStatusElement.textContent = "Wind Status: " + data.windStatus;
+            waterStatusElement.className =
+              "water-status status-" + data.waterStatus.toLowerCase();
+            windStatusElement.className =
+              "wind-status status-" + data.windStatus.toLowerCase();
+            statusDataElement.innerHTML =
+              "<p><b>Water:</b> " +
+              data.data.water +
+              " Meter</p><p><b>Wind:</b> " +
+              data.data.wind +
+              " Meter Per Second</p>";
+
+            // Memperbarui status setiap 15 detik
+            setTimeout(getStatus, 15000);
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+
+      // Memanggil getStatus saat halaman dimuat
+      document.addEventListener("DOMContentLoaded", getStatus);
+    </script>
+  </body>
+</html>
