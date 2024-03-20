@@ -3,7 +3,6 @@ package main
 import (
 	model "assignment-golang/models"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"time"
@@ -17,9 +16,11 @@ import (
 var db *gorm.DB
 
 func initDB() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
+	if os.Getenv("APP_ENV") != "production" {
+		err := godotenv.Load(".env")
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	dbHost := os.Getenv("DB_HOST")
