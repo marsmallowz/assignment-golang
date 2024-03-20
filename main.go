@@ -39,8 +39,6 @@ func initDB() {
 	db = database
 }
 
-var Router *gin.Engine
-
 func main() {
 	initDB()
 	r := gin.Default()
@@ -67,12 +65,8 @@ func createOrder(c *gin.Context) {
 	if newOrder.OrderedAt.IsZero() {
 		newOrder.OrderedAt = time.Now()
 	}
-	fmt.Println("before newOrder")
-	fmt.Println(newOrder)
-	db.Create(&newOrder)
-	fmt.Println("after newOrder")
-	fmt.Println(newOrder)
 
+	db.Create(&newOrder)
 	c.JSON(200, newOrder)
 }
 
