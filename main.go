@@ -39,6 +39,8 @@ func initDB() {
 	db = database
 }
 
+var Router *gin.Engine
+
 func main() {
 	initDB()
 	r := gin.Default()
